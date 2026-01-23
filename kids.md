@@ -298,3 +298,93 @@ zuó tiān	yesterday
 zuò	to do; to make; to produce; to write; to compose; to act as; to engage in; to hold (a party); to be; to become; to function (in some capacity); to serve as; to be used for; to form (a bond or relationship); to pretend; to feign; to act a part; to put on appearance
 坐
 zuò	to sit; to take a seat; to take (a bus, airplane etc); to bear fruit
+十一
+shí yī	eleven; 11
+十二
+shí èr	twelve; 12
+十三
+shí sān	thirteen; 13
+十四
+shí sì	fourteen; 14
+十五
+shí wǔ	fifteen; 15
+十六
+shí liù	sixteen; 16
+十七
+shí qī	seventeen; 17
+十八
+shí bā	eighteen; 18
+十九
+shí jiǔ	nineteen; 19
+二十
+èr shí	twenty; 20
+你好
+nǐ hǎo	hello; hi
+早上好
+zǎo shang hǎo	good morning
+晚上好
+wǎn shang hǎo	good evening
+晚安
+wǎn ān	good night
+面包
+miàn bāo	bread
+牛奶
+niú nǎi	milk
+鸟
+niǎo	bird
+鱼
+yú	fish
+兔子
+tù zi	rabbit
+马
+mǎ	horse
+牛
+niú	cow; ox
+羊
+yáng	sheep; goat
+猪
+zhū	pig
+鸡
+jī	chicken
+自行车
+zì xíng chē	bicycle; bike
+汽车
+qì chē	car; automobile
+公共汽车
+gōng gòng qì chē	bus; public bus
+火车
+huǒ chē	train
+船
+chuán	boat; ship
+摩托车
+mó tuō chē	motorcycle
+地铁
+dì tiě	subway; metro
+公交车
+gōng jiāo chē	bus; public bus
+晴天
+qíng tiān	sunny day
+阴天
+yīn tiān	cloudy day
+风
+fēng	wind
+雪
+xuě	snow
+太阳
+tài yáng	sun
+月亮
+yuè liang	moon
+星星
+xīng xing	star
+快
+kuài	fast; quick
+慢
+màn	slow
+新
+xīn	new
+笔
+bǐ	pen; pencil
+纸
+zhǐ	paper
+课
+kè	class; lesson
