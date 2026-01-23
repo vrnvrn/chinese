@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Chinese Flashcards - Learn with Lessons!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            opacity: 0.9;
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .header a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .lesson-selector {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .lesson-selector h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .lesson-btn {
+            padding: 20px;
+            border: 3px solid #ff6b9d;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .lesson-btn:hover {
+            background: #ff6b9d;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255,107,157,0.4);
+        }
+
+        .lesson-btn.active {
+            background: #c44569;
+            color: white;
+            border-color: #c44569;
+        }
+
+        .lesson-btn .lesson-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .lesson-btn .lesson-count {
+            font-size: 0.85em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .flashcard-section {
+            display: none;
+        }
+
+        .flashcard-section.active {
+            display: block;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .flashcard {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #333;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+            transform: rotateY(180deg);
+        }
+
+        .chinese {
+            font-size: 80px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .pinyin {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .english {
+            font-size: 28px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .action-btn {
+            background: #ff6b9d;
+            color: white;
+        }
+
+        .action-btn:hover {
+            background: #c44569;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255,107,157,0.3);
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            color: #ff6b9d;
+            border: 2px solid #ff6b9d;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover {
+            background: #ff6b9d;
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card-counter {
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            margin: 15px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .lesson-info {
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .back-to-lessons {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            display: block;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .back-to-lessons:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .vocab-list-section {
+            max-width: 800px;
+            margin: 40px auto 0;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #ff6b9d;
+        }
+
+        .vocab-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .vocab-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b9d;
+        }
+
+        .vocab-item .chinese-word {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .vocab-item .pinyin-word {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .vocab-item .english-word {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .sentences-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sentence-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #c44569;
+        }
+
+        .sentence-item .sentence-chinese {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .sentence-item .sentence-pinyin {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        .sentence-item .sentence-english {
+            font-size: 1em;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            .chinese {
+                font-size: 60px;
+            }
+
+            .pinyin {
+                font-size: 28px;
+            }
+
+            .english {
+                font-size: 22px;
+            }
+
+            .flashcard {
+                height: 350px;
+            }
+
+            .lessons-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .vocab-list {
+                grid-template-columns: 1fr;
+            }
+
+            .vocab-list-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Kids Chinese Flashcards</h1>
+            <a href="index.html" id="backToMainLink">← Back to Main Flashcards</a>
+        </div>
+
+        <div class="lesson-selector" id="lessonSelector">
+            <h2>📚 Choose a Lesson to Start!</h2>
+            <div class="lessons-grid" id="lessonsGrid">
+                <!-- Lessons will be populated here -->
+            </div>
+        </div>
+
+        <div class="flashcard-section" id="flashcardSection">
+            <button class="back-to-lessons" id="backToLessons">← Back to Lessons</button>
+            <div class="lesson-info" id="lessonInfo">Loading lesson...</div>
+            <div class="controls">
+                <button class="action-btn" id="randomBtn">🔀 Shuffle</button>
+                <div id="cardInfo" style="color: #666; font-size: 14px;">Loading...</div>
+            </div>
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="card-face card-front">
+                        <div class="chinese" id="chinese">加载中...</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="pinyin" id="pinyin"></div>
+                        <div class="english" id="english"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-counter" id="counter">1 / 1</div>
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn">← Previous</button>
+                <button class="nav-btn" id="nextBtn">Next →</button>
+            </div>
+            
+            <div class="vocab-list-section" id="vocabListSection">
+                <h2 class="section-title">📝 Vocabulary List</h2>
+                <div class="vocab-list" id="vocabList"></div>
+                
+                <h2 class="section-title">💬 Sample Sentences</h2>
+                <div class="sentences-list" id="sentencesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vocabulary data storage
+        let allVocab = [];
+        let lessons = {};
+        let currentVocab = [];
+        let currentIndex = 0;
+        let currentLesson = null;
+        let isRandomized = false;
+
+        // Define lessons with themes
+        const lessonDefinitions = {
+            'numbers': {
+                name: '🔢 Numbers',
+                icon: '🔢',
+                words: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十']
+            },
+            'greetings': {
+                name: '👋 Greetings & Polite Words',
+                icon: '👋',
+                words: ['你好', '谢谢', '对不起', '不客气', '没关系', '再见', '喂', '早上好', '晚上好', '晚安']
+            },
+            'family': {
+                name: '👨‍👩‍👧‍👦 Family & People',
+                icon: '👨‍👩‍👧‍👦',
+                words: ['爸爸', '妈妈', '儿子', '女儿', '人', '朋友', '老师', '学生', '同学', '医生', '先生', '小姐', '名字']
+            },
+            'food': {
+                name: '🍎 Food & Drink',
+                icon: '🍎',
+                words: ['菜', '茶', '吃', '喝', '米饭', '苹果', '水果', '饭店', '面包', '牛奶']
+            },
+            'animals': {
+                name: '🐾 Animals',
+                icon: '🐾',
+                words: ['狗', '猫', '鸟', '鱼', '兔子', '马', '牛', '羊', '猪', '鸡']
+            },
+            'time': {
+                name: '⏰ Time & Days',
+                icon: '⏰',
+                words: ['今天', '明天', '昨天', '上午', '下午', '中午', '时候', '星期', '月', '年', '分钟']
+            },
+            'school': {
+                name: '🏫 School & Learning',
+                icon: '🏫',
+                words: ['学校', '学习', '书', '读', '写', '字', '汉语', '笔', '纸', '课']
+            },
+            'objects': {
+                name: '📦 Common Objects',
+                icon: '📦',
+                words: ['杯子', '椅子', '桌子', '衣服', '电脑', '电视', '电影', '东西', '本', '个', '些']
+            },
+            'places': {
+                name: '📍 Places & Locations',
+                icon: '📍',
+                words: ['北京', '中国', '商店', '饭店', '医院', '家', '前面', '后面', '上', '下', '里']
+            },
+            'transport': {
+                name: '🚗 Transportation',
+                icon: '🚗',
+                words: ['出租车', '飞机', '自行车', '汽车', '公共汽车', '火车', '船', '摩托车', '地铁', '公交车']
+            },
+            'actions': {
+                name: '🏃 Actions & Verbs',
+                icon: '🏃',
+                words: ['来', '去', '看', '听', '说', '做', '坐', '住', '买', '打电话', '睡觉', '看见', '开', '回', '想', '叫', '认识', '工作']
+            },
+            'questions': {
+                name: '❓ Questions',
+                icon: '❓',
+                words: ['什么', '谁', '哪', '哪儿', '怎么', '怎么样', '多少', '几', '吗', '呢']
+            },
+            'pronouns': {
+                name: '👤 Pronouns & Basic Words',
+                icon: '👤',
+                words: ['我', '你', '他', '她', '我们', '这', '那', '是', '有', '在', '的', '了', '和', '很', '都', '会', '能', '想', '喜欢', '爱', '不', '太', '多', '少']
+            },
+            'descriptions': {
+                name: '✨ Descriptions & Feelings',
+                icon: '✨',
+                words: ['大', '小', '好', '漂亮', '高兴', '热', '冷', '快', '慢', '新']
+            },
+            'weather': {
+                name: '🌤️ Weather',
+                icon: '🌤️',
+                words: ['天气', '下雨', '现在', '晴天', '阴天', '风', '雪', '太阳', '月亮', '星星']
+            },
+            'all': {
+                name: '🌟 All Words',
+                icon: '🌟',
+                words: [] // Will be populated with all words
+            }
+        };
+
+        // Parse kids.md format (alternating Chinese/pinyin-English lines)
+        function parseKidsMarkdown(text) {
+            const lines = text.split('\n');
+            const vocab = [];
+            
+            for (let i = 0; i < lines.length; i += 2) {
+                const chineseLine = lines[i]?.trim();
+                const pinyinLine = lines[i + 1]?.trim();
+                
+                if (!chineseLine || !pinyinLine) continue;
+                
+                const parts = pinyinLine.split('\t');
+                if (parts.length >= 2) {
+                    const pinyin = parts[0].trim();
+                    const english = parts.slice(1).join(' ').trim();
+                    
+                    if (chineseLine && pinyin && english) {
+                        vocab.push({
+                            chinese: chineseLine,
+                            pinyin: pinyin,
+                            english: english
+                        });
+                    }
+                }
+            }
+            
+            return vocab;
+        }
+
+        // Embedded vocabulary data (from kids.md)
+        const kidsVocabularyData = `爱
+ài	to love; affection; to be fond of; to like
+八
+bā	eight; 8
+爸爸
+bà ba	father (informal); CL:个[ge4] ,位[wei4]
+杯子
+bēi zi	cup; glass; CL:个[ge4] ,支[zhi1]
+北京
+běi jīng	Beijing; capital of People's Republic of China; Peking; PRC government
+本
+běn	origin; source; roots or stems of plants; this; the current; root; foundation; basis; classifier for books, periodicals, files etc; originally
+不客气
+bú kè qi	you're welcome; it's my pleasure (answer to someone who thanks)
+不
+bù	not (negative prefix); no
+菜
+cài	dish (type of food); vegetables; vegetable; cuisine; CL:盘[pan2] ,道[dao4]
+茶
+chá	tea; tea plant; CL:杯[bei1] ,壶[hu2]
+吃
+chī	to eat; to have one's meal; to eradicate; to destroy; to absorb; to suffer; to exhaust
+出租车
+chū zū chē	taxi
+打电话
+dǎ diàn huà	to make a phone call
+大
+dà	big; huge; large; major; great; wide; deep; oldest; eldest
+的
+de	of; structural particle: used before a noun, linking it to preceding possessive or descriptive attributive
+点
+diǎn	a little; a bit; drop (of liquid); stain; spot; speck; jot; dot stroke (in Chinese characters); decimal point; point; mark (of degree or level); a place (with certain characteristics); iron bell; o'clock; some; (point) unit of measurement for type; to touch on briefly; to make clear; to light; to ignite; to kindle; period of time at night (24 minutes) (old); a drip; to dibble; classifier for small indeterminate quantities
+电脑
+diàn nǎo	computer; CL:台[tai2]
+电视
+diàn shì	television; TV; CL:台[tai2] ,个[ge4]
+电影
+diàn yǐng	movie; film; CL:部[bu4] ,幕[mu4] ,场[chang3]
+东西
+dōng xi	thing; stuff; person; CL:个[ge4] ,件[jian4]
+都
+dōu	all, both; entirely (due to) each; even; already
+读
+dú	to read; to study; reading of word (i.e. pronunciation), similar to 拼音[pin1 yin1]
+对不起
+duì bu qǐ	I'm sorry; excuse me; pardon me; if you please; sorry? (please repeat); unworthy; to let down;
+多
+duō	many; much; a lot of; numerous; multi-
+多少
+duō shǎo	how much; how many
+儿子
+ér zi	son
+二
+èr	two; 2; stupid (Beijing dialect)
+饭店
+fàn diàn	restaurant; hotel; CL:家[jia1],個|个[ge4];
+飞机
+fēi jī	airplane; CL: 架[jia4]
+分钟
+fēn zhōng	minute
+高兴
+gāo xìng	happy; glad; willing (to do sth); in a cheerful mood
+个
+gè	classifier for people or objects in general; individual; this; that; size
+工作
+gōng zuò	job; work; construction; task; CL:个[ge4] ,份[fen4] ,项[xiang4]
+狗
+gǒu	dog; CL:只[zhi1] ,条[tiao2]
+汉语
+hàn yǔ	Chinese language
+好
+hǎo	good; well; proper; good to; easy to; very; so; (suffix indicating completion or readiness)
+号
+hào	day of a month; (suffix used after) name of a ship; (ordinal) number
+喝
+hē	to drink; to shout (a command)
+和
+hé	and; together with; with; sum; union; peace; harmony; surname He
+很
+hěn	very; (adverb of degree); quite; awfully
+后面
+hòu miàn	rear; back; behind; later; afterwards
+回
+huí	to go back; to turn around; to answer; to return; to circle; to revolve; Hui ethnic group; time; classifier for acts of a play; section or chapter (of a classic book)
+会
+huì	can; be possible; be able to; will; be likely to; be sure to; to assemble; to meet; to gather; to see; union; group; association; a moment (Taiwan pr. for this sense is hui3)
+几
+jǐ	how much; how many; several; a few
+家
+jiā	home; family; classifier for families or businesses; refers to the philosophical schools of pre-Han China; noun suffix for specialists in some activity such as musician or revolutionary, corresponds to English -ist, -er, -ary or -ian; surname Jia; CL:个[ge4]
+叫
+jiào	to call; to shout; to order; to ask; to be called; by (indicates agent in the passive mood)
+今天
+jīn tiān	today; at the present
+九
+jiǔ	nine; 9
+开
+kāi	to open; to start; to turn on; to operate (vehicle)
+看
+kàn	to look at
+看见
+kàn jiàn	to see; to catch sight of
+块
+kuài	unit of currency; lump (of earth); chunk; piece; classifier for pieces of cloth, cake, soap etc; colloquial word for yuan (or other unit of currency such as Hong Kong or US dollar etc), usually as 块钱
+来
+lái	to come; to arrive; to come round; ever since; next
+老师
+lǎo shī	teacher; CL:个[ge4] ,位[wei4]
+了
+le	(completed action marker); (modal particle intensifying preceding clause)
+冷
+lěng	cold
+里
+lǐ	inside; lining; interior; internal
+六
+liù	six; 6
+吗
+ma	(question tag)
+妈妈
+mā ma	mum; mama; mommy; mother; CL:个[ge4] ,位[wei4]
+买
+mǎi	to buy; to purchase
+猫
+māo	cat; CL:只[zhi1]
+没关系
+méi guān xi	it doesn't matter
+没有
+méi yǒu	haven't; hasn't; doesn't exist; to not have; to not be;
+米饭
+mǐ fàn	(cooked) rice
+名字
+míng zi	name (of a person or thing); CL:个[ge4]
+明天
+míng tiān	tomorrow
+哪
+nǎ	which? (interrogative, followed by classifier or numeral-classifier);
+哪儿
+nǎ er	where?; wherever; anywhere
+那
+nà	that; those; then (in that case); commonly pr. [nei4] before a classifier, esp. in Beijing;
+呢
+ne	(question particle for subjects already mentioned)
+能
+néng	to be able to; to be capable of; ability; capability; able; capable; can possibly; (usually used in the negative) to have the possibility of
+你
+nǐ	you (informal)
+年
+nián	year; CL:个[ge4]
+女儿
+nǚ ér	daughter
+朋友
+péng you	friend; CL:个[ge4] ,位[wei4]
+漂亮
+piào liang	pretty; beautiful
+苹果
+píng guǒ	apple; CL:个[ge4] ,颗[ke1]
+七
+qī	seven; 7
+前面
+qián miàn	ahead; in front; preceding; above
+钱
+qián	coin; money; CL:笔[bi3]
+请
+qǐng	to ask; to invite; please (do sth); to treat (to a meal etc); to request
+去
+qù	to go; to go to (a place); to cause to go or send (sb); to remove; to get rid of; (when used either before or after a verb) to go in order to do sth; to be apart from in space or time; (after a verb of motion indicates movement away from the speaker); (used after certain verbs to indicate detachment or separation); (of a time or an event etc) just passed or elapsed
+热
+rè	heat; to heat up; fervent; hot (of weather); warm up
+人
+rén	man; person; people; CL:个[ge4] ,位[wei4]
+认识
+rèn shi	to know; to recognize; to be familiar with; acquainted with sth; knowledge; understanding; awareness; cognition
+三
+sān	three; 3
+商店
+shāng diàn	store; shop; CL:家[jia1] ,个[ge4]
+上
+shàng	on
+上午
+shàng wǔ	morning; CL:个[ge4]
+少
+shǎo	few; little; lack
+谁
+shéi	who; also pronounced shui2
+什么
+shén me	what?; who?; something; anything
+十
+shí	ten; 10
+时候
+shí hou	time; length of time; moment; period
+是
+shì	to be; yes
+书
+shū	book; letter; CL:本[ben3] ,册[ce4] ,部[bu4]; see also Book of History
+水
+shuǐ	water; river; liquid; beverage
+水果
+shuǐguǒ	fruit
+睡觉
+shuì jiào	to go to bed; to go to sleep
+说
+shuō	to speak; to say; to explain; to scold; to tell off; a theory (usually in compounds such as 日心说 heliocentric theory);
+四
+sì	four; 4
+岁
+suì	classifier for years (of age); year; year (of crop harvests)
+他
+tā	he or him; (used for either sex when the sex is unknown or unimportant); (used before sb's name for emphasis); (used as a meaningless mock object); other; another
+她
+tā	she
+太
+tài	too (much); very; extremely; highest; greatest
+天气
+tiān qì	weather
+听
+tīng	to listen; to hear; to obey; a can (loanword from English 'tin'); classifier for canned beverages
+同学
+tóng xué	(fellow) classmate; CL:位[wei4] ,个[ge4]
+喂
+wèi	hello (interj., esp. on telephone); hey
+我
+wǒ	I; me; my
+我们
+wǒ men	we; us; ourselves; our
+五
+wǔ	five; 5
+喜欢
+xǐ huan	to like; to be fond of
+下
+xià	down; downwards; below; lower; later; next (week etc); second (of two parts); to decline; to go down
+下午
+xià wǔ	afternoon; p.m.; CL:个[ge4]
+下雨
+xià yǔ	to rain; rainy
+先生
+xiān sheng	Mister (Mr.); husband; doctor (topolect); teacher; CL:个[ge4] ,位[wei4]
+现在
+xiàn zài	now; at present; at the moment; modern; current; nowadays
+想
+xiǎng	to think; to believe; to suppose; to wish; to want; to miss
+小
+xiǎo	small; tiny; young
+小姐
+xiǎo jie	young lady; Miss; (slang) prostitute; CL:个[ge4] ,位[wei4]
+些
+xiē	some; few; several; (a measure word)
+写
+xiě	to write
+谢谢
+xiè xie	to thank; thanks
+星期
+xīng qī	week; CL:个[ge4]
+学生
+xué sheng	student; school child
+学习
+xué xí	to learn; to study
+学校
+xué xiào	school; CL:所[suo3]
+一
+yī	one; 1; single; a (article); as soon as; entire; whole; all; throughout; 'one' radical in Chinese characters (Kangxi radical 1)
+一点儿
+yī diǎn er	a little (bit)
+医生
+yī shēng	doctor; CL:个[ge4] ,位[wei4] ,名[ming2]
+医院
+yī yuàn	hospital; CL:所[suo3] ,家[jia1] ,座[zuo4]
+衣服
+yī fu	clothes; CL:件[jian4] ,套[tao4]
+椅子
+yǐ zi	chair; CL:把[ba3] ,套[tao4]
+有
+yǒu	to have; there is; there are; to exist; to be
+月
+yuè	month; moon; CL:个[ge4] ,轮[lun2]
+再见
+zài jiàn	goodbye; see you again later
+在
+zài	(located) at; (to be) in; to exist; in the middle of doing sth; (indicating an action in progress)
+怎么
+zěn me	how?; what?; why?
+怎么样
+zěn me yàng	how are things? how?; how about?; how was it?
+这
+zhè	this; these; (commonly pr. [zhei4] before a classifier, esp. in Beijing);
+中国
+zhōng guó	China; Middle Kingdom
+中午
+zhōng wǔ	noon; midday; CL:个[ge4]
+住
+zhù	to live; to dwell; to stay; to reside; to stop
+桌子
+zhuō zi	table; desk; CL:张[zhang1] ,套[tao4]
+字
+zì	letter; character; word; symbol; CL:个[ge4]
+昨天
+zuó tiān	yesterday
+做
+zuò	to do; to make; to produce; to write; to compose; to act as; to engage in; to hold (a party); to be; to become; to function (in some capacity); to serve as; to be used for; to form (a bond or relationship); to pretend; to feign; to act a part; to put on appearance
+坐
+zuò	to sit; to take a seat; to take (a bus, airplane etc); to bear fruit
+十一
+shí yī	eleven; 11
+十二
+shí èr	twelve; 12
+十三
+shí sān	thirteen; 13
+十四
+shí sì	fourteen; 14
+十五
+shí wǔ	fifteen; 15
+十六
+shí liù	sixteen; 16
+十七
+shí qī	seventeen; 17
+十八
+shí bā	eighteen; 18
+十九
+shí jiǔ	nineteen; 19
+二十
+èr shí	twenty; 20
+你好
+nǐ hǎo	hello; hi
+早上好
+zǎo shang hǎo	good morning
+晚上好
+wǎn shang hǎo	good evening
+晚安
+wǎn ān	good night
+面包
+miàn bāo	bread
+牛奶
+niú nǎi	milk
+鸟
+niǎo	bird
+鱼
+yú	fish
+兔子
+tù zi	rabbit
+马
+mǎ	horse
+牛
+niú	cow; ox
+羊
+yáng	sheep; goat
+猪
+zhū	pig
+鸡
+jī	chicken
+自行车
+zì xíng chē	bicycle; bike
+汽车
+qì chē	car; automobile
+公共汽车
+gōng gòng qì chē	bus; public bus
+火车
+huǒ chē	train
+船
+chuán	boat; ship
+摩托车
+mó tuō chē	motorcycle
+地铁
+dì tiě	subway; metro
+公交车
+gōng jiāo chē	bus; public bus
+晴天
+qíng tiān	sunny day
+阴天
+yīn tiān	cloudy day
+风
+fēng	wind
+雪
+xuě	snow
+太阳
+tài yáng	sun
+月亮
+yuè liang	moon
+星星
+xīng xing	star
+快
+kuài	fast; quick
+慢
+màn	slow
+新
+xīn	new
+笔
+bǐ	pen; pencil
+纸
+zhǐ	paper
+课
+kè	class; lesson`;
+
+        // Load vocabulary data
+        function loadVocabulary() {
+            try {
+                // Try to fetch from server first, fall back to embedded data
+                fetch('kids.md')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        }
+                        throw new Error('Not available');
+                    })
+                    .then(text => {
+                        allVocab = parseKidsMarkdown(text);
+                        initializeLessons();
+                    })
+                    .catch(() => {
+                        // Fall back to embedded data
+                        allVocab = parseKidsMarkdown(kidsVocabularyData);
+                        initializeLessons();
+                    });
+            } catch (error) {
+                // Use embedded data as fallback
+                allVocab = parseKidsMarkdown(kidsVocabularyData);
+                initializeLessons();
+            }
+        }
+
+        // Initialize lessons after vocabulary is loaded
+        function initializeLessons() {
+            // Populate 'all' lesson with all words
+            lessonDefinitions.all.words = allVocab.map(v => v.chinese);
+            
+            // Build lessons object
+            for (const [key, lesson] of Object.entries(lessonDefinitions)) {
+                // Filter vocabulary
+                let vocab = allVocab.filter(v => lesson.words.includes(v.chinese));
+                
+                // For numbers lesson, maintain the defined order
+                if (key === 'numbers') {
+                    vocab.sort((a, b) => {
+                        const indexA = lesson.words.indexOf(a.chinese);
+                        const indexB = lesson.words.indexOf(b.chinese);
+                        return indexA - indexB;
+                    });
+                }
+                
+                lessons[key] = {
+                    name: lesson.name,
+                    icon: lesson.icon,
+                    vocab: vocab
+                };
+            }
+            
+            renderLessons();
+        }
+
+        // Render lesson buttons
+        function renderLessons() {
+            const grid = document.getElementById('lessonsGrid');
+            grid.innerHTML = '';
+            
+            for (const [key, lesson] of Object.entries(lessons)) {
+                const btn = document.createElement('button');
+                btn.className = 'lesson-btn';
+                btn.innerHTML = `
+                    <span class="lesson-icon">${lesson.icon}</span>
+                    <div>${lesson.name}</div>
+                    <div class="lesson-count">${lesson.vocab.length} words</div>
+                `;
+                btn.addEventListener('click', () => selectLesson(key));
+                grid.appendChild(btn);
+            }
+        }
+
+        // Sample sentences for each lesson
+        const lessonSentences = {
+            'numbers': [
+                { chinese: '我有一本书。', pinyin: 'Wǒ yǒu yī běn shū.', english: 'I have one book.' },
+                { chinese: '他有两只猫。', pinyin: 'Tā yǒu liǎng zhī māo.', english: 'He has two cats.' },
+                { chinese: '今天是三月十五日。', pinyin: 'Jīntiān shì sān yuè shíwǔ rì.', english: 'Today is March 15th.' },
+                { chinese: '我有十个苹果。', pinyin: 'Wǒ yǒu shí gè píngguǒ.', english: 'I have ten apples.' },
+                { chinese: '她今年十二岁。', pinyin: 'Tā jīnnián shí\'èr suì.', english: 'She is twelve years old this year.' },
+                { chinese: '现在是下午三点。', pinyin: 'Xiànzài shì xiàwǔ sān diǎn.', english: 'It is now 3 PM.' },
+                { chinese: '我有二十个朋友。', pinyin: 'Wǒ yǒu èrshí gè péngyou.', english: 'I have twenty friends.' },
+                { chinese: '这本书有十八页。', pinyin: 'Zhè běn shū yǒu shíbā yè.', english: 'This book has eighteen pages.' },
+                { chinese: '我买了十四支笔。', pinyin: 'Wǒ mǎile shísì zhī bǐ.', english: 'I bought fourteen pens.' },
+                { chinese: '今天是十一月十九日。', pinyin: 'Jīntiān shì shíyī yuè shíjiǔ rì.', english: 'Today is November 19th.' }
+            ],
+            'greetings': [
+                { chinese: '你好！', pinyin: 'Nǐ hǎo!', english: 'Hello!' },
+                { chinese: '早上好，老师！', pinyin: 'Zǎoshang hǎo, lǎoshī!', english: 'Good morning, teacher!' },
+                { chinese: '谢谢你的帮助。', pinyin: 'Xièxie nǐ de bāngzhù.', english: 'Thank you for your help.' },
+                { chinese: '对不起，我迟到了。', pinyin: 'Duìbuqǐ, wǒ chídàole.', english: 'Sorry, I am late.' },
+                { chinese: '不客气。', pinyin: 'Bú kèqì.', english: 'You\'re welcome.' },
+                { chinese: '没关系，不要紧。', pinyin: 'Méi guānxi, bú yàojǐn.', english: 'It doesn\'t matter, it\'s okay.' },
+                { chinese: '晚上好，妈妈！', pinyin: 'Wǎnshang hǎo, māma!', english: 'Good evening, mom!' },
+                { chinese: '晚安，爸爸！', pinyin: 'Wǎn\'ān, bàba!', english: 'Good night, dad!' },
+                { chinese: '再见，明天见！', pinyin: 'Zàijiàn, míngtiān jiàn!', english: 'Goodbye, see you tomorrow!' },
+                { chinese: '喂，你好吗？', pinyin: 'Wèi, nǐ hǎo ma?', english: 'Hello, how are you?' }
+            ],
+            'family': [
+                { chinese: '这是我的爸爸。', pinyin: 'Zhè shì wǒ de bàba.', english: 'This is my father.' },
+                { chinese: '妈妈很爱我。', pinyin: 'Māma hěn ài wǒ.', english: 'Mom loves me very much.' },
+                { chinese: '我有一个儿子。', pinyin: 'Wǒ yǒu yī gè érzi.', english: 'I have a son.' },
+                { chinese: '她是我的女儿。', pinyin: 'Tā shì wǒ de nǚ\'ér.', english: 'She is my daughter.' },
+                { chinese: '老师很好。', pinyin: 'Lǎoshī hěn hǎo.', english: 'The teacher is very good.' },
+                { chinese: '学生很聪明。', pinyin: 'Xuésheng hěn cōngmíng.', english: 'The student is very smart.' },
+                { chinese: '他是我的好朋友。', pinyin: 'Tā shì wǒ de hǎo péngyou.', english: 'He is my good friend.' },
+                { chinese: '我的名字是小明。', pinyin: 'Wǒ de míngzi shì Xiǎomíng.', english: 'My name is Xiaoming.' },
+                { chinese: '同学都很友好。', pinyin: 'Tóngxué dōu hěn yǒuhǎo.', english: 'The classmates are all very friendly.' },
+                { chinese: '医生帮助病人。', pinyin: 'Yīshēng bāngzhù bìngrén.', english: 'The doctor helps patients.' }
+            ],
+            'food': [
+                { chinese: '我喜欢吃苹果。', pinyin: 'Wǒ xǐhuan chī píngguǒ.', english: 'I like to eat apples.' },
+                { chinese: '我想喝茶。', pinyin: 'Wǒ xiǎng hē chá.', english: 'I want to drink tea.' },
+                { chinese: '米饭很好吃。', pinyin: 'Mǐfàn hěn hǎochī.', english: 'Rice is very delicious.' },
+                { chinese: '我吃很多菜。', pinyin: 'Wǒ chī hěn duō cài.', english: 'I eat a lot of vegetables.' },
+                { chinese: '水果很甜。', pinyin: 'Shuǐguǒ hěn tián.', english: 'Fruit is very sweet.' },
+                { chinese: '我想买面包。', pinyin: 'Wǒ xiǎng mǎi miànbāo.', english: 'I want to buy bread.' },
+                { chinese: '牛奶很有营养。', pinyin: 'Niúnǎi hěn yǒu yíngyǎng.', english: 'Milk is very nutritious.' },
+                { chinese: '我们去饭店吃饭。', pinyin: 'Wǒmen qù fàndiàn chīfàn.', english: 'We go to a restaurant to eat.' },
+                { chinese: '我喜欢喝牛奶。', pinyin: 'Wǒ xǐhuan hē niúnǎi.', english: 'I like to drink milk.' },
+                { chinese: '这个苹果很大。', pinyin: 'Zhè gè píngguǒ hěn dà.', english: 'This apple is very big.' }
+            ],
+            'animals': [
+                { chinese: '狗很可爱。', pinyin: 'Gǒu hěn kě\'ài.', english: 'Dogs are very cute.' },
+                { chinese: '猫喜欢睡觉。', pinyin: 'Māo xǐhuan shuìjiào.', english: 'Cats like to sleep.' },
+                { chinese: '鸟会飞。', pinyin: 'Niǎo huì fēi.', english: 'Birds can fly.' },
+                { chinese: '鱼在水里游泳。', pinyin: 'Yú zài shuǐ lǐ yóuyǒng.', english: 'Fish swim in the water.' },
+                { chinese: '兔子跑得很快。', pinyin: 'Tùzi pǎo de hěn kuài.', english: 'Rabbits run very fast.' },
+                { chinese: '马很大。', pinyin: 'Mǎ hěn dà.', english: 'Horses are big.' },
+                { chinese: '牛吃草。', pinyin: 'Niú chī cǎo.', english: 'Cows eat grass.' },
+                { chinese: '羊很温顺。', pinyin: 'Yáng hěn wēnshùn.', english: 'Sheep are very gentle.' },
+                { chinese: '猪喜欢吃。', pinyin: 'Zhū xǐhuan chī.', english: 'Pigs like to eat.' },
+                { chinese: '鸡会下蛋。', pinyin: 'Jī huì xià dàn.', english: 'Chickens lay eggs.' }
+            ],
+            'time': [
+                { chinese: '今天是星期一。', pinyin: 'Jīntiān shì xīngqīyī.', english: 'Today is Monday.' },
+                { chinese: '明天是周末。', pinyin: 'Míngtiān shì zhōumò.', english: 'Tomorrow is the weekend.' },
+                { chinese: '昨天我去了学校。', pinyin: 'Zuótiān wǒ qùle xuéxiào.', english: 'Yesterday I went to school.' },
+                { chinese: '现在是上午十点。', pinyin: 'Xiànzài shì shàngwǔ shí diǎn.', english: 'It is now 10 AM.' },
+                { chinese: '下午三点我有课。', pinyin: 'Xiàwǔ sān diǎn wǒ yǒu kè.', english: 'I have class at 3 PM.' },
+                { chinese: '中午我吃午饭。', pinyin: 'Zhōngwǔ wǒ chī wǔfàn.', english: 'I eat lunch at noon.' },
+                { chinese: '这个月是十二月。', pinyin: 'Zhè gè yuè shì shí\'èr yuè.', english: 'This month is December.' },
+                { chinese: '今年是2024年。', pinyin: 'Jīnnián shì èr líng èr sì nián.', english: 'This year is 2024.' },
+                { chinese: '现在是时候回家了。', pinyin: 'Xiànzài shì shíhòu huíjiā le.', english: 'It is time to go home now.' },
+                { chinese: '我每天学习三十分钟。', pinyin: 'Wǒ měitiān xuéxí sānshí fēnzhōng.', english: 'I study for thirty minutes every day.' }
+            ],
+            'school': [
+                { chinese: '我去学校学习。', pinyin: 'Wǒ qù xuéxiào xuéxí.', english: 'I go to school to study.' },
+                { chinese: '老师教我们汉语。', pinyin: 'Lǎoshī jiāo wǒmen hànyǔ.', english: 'The teacher teaches us Chinese.' },
+                { chinese: '我喜欢读书。', pinyin: 'Wǒ xǐhuan dúshū.', english: 'I like to read books.' },
+                { chinese: '我用笔写字。', pinyin: 'Wǒ yòng bǐ xiě zì.', english: 'I use a pen to write characters.' },
+                { chinese: '我在纸上画画。', pinyin: 'Wǒ zài zhǐ shang huàhuà.', english: 'I draw on paper.' },
+                { chinese: '今天我有三节课。', pinyin: 'Jīntiān wǒ yǒu sān jié kè.', english: 'Today I have three classes.' },
+                { chinese: '学生要好好学习。', pinyin: 'Xuésheng yào hǎohāo xuéxí.', english: 'Students should study hard.' },
+                { chinese: '这本书很有趣。', pinyin: 'Zhè běn shū hěn yǒuqù.', english: 'This book is very interesting.' },
+                { chinese: '我学习写汉字。', pinyin: 'Wǒ xuéxí xiě hànzì.', english: 'I learn to write Chinese characters.' },
+                { chinese: '学校很大很漂亮。', pinyin: 'Xuéxiào hěn dà hěn piàoliang.', english: 'The school is very big and beautiful.' }
+            ],
+            'objects': [
+                { chinese: '桌子上有一个杯子。', pinyin: 'Zhuōzi shang yǒu yī gè bēizi.', english: 'There is a cup on the table.' },
+                { chinese: '我坐在椅子上。', pinyin: 'Wǒ zuò zài yǐzi shang.', english: 'I sit on the chair.' },
+                { chinese: '这件衣服很漂亮。', pinyin: 'Zhè jiàn yīfu hěn piàoliang.', english: 'This piece of clothing is very beautiful.' },
+                { chinese: '我用电脑学习。', pinyin: 'Wǒ yòng diànnǎo xuéxí.', english: 'I use a computer to study.' },
+                { chinese: '我喜欢看电视。', pinyin: 'Wǒ xǐhuan kàn diànshì.', english: 'I like to watch TV.' },
+                { chinese: '我们去看电影。', pinyin: 'Wǒmen qù kàn diànyǐng.', english: 'We go to watch a movie.' },
+                { chinese: '这是什么东西？', pinyin: 'Zhè shì shénme dōngxi?', english: 'What is this thing?' },
+                { chinese: '我有一本书。', pinyin: 'Wǒ yǒu yī běn shū.', english: 'I have a book.' },
+                { chinese: '桌子上有很多东西。', pinyin: 'Zhuōzi shang yǒu hěn duō dōngxi.', english: 'There are many things on the table.' },
+                { chinese: '这个杯子是新的。', pinyin: 'Zhè gè bēizi shì xīn de.', english: 'This cup is new.' }
+            ],
+            'places': [
+                { chinese: '北京是中国的首都。', pinyin: 'Běijīng shì Zhōngguó de shǒudū.', english: 'Beijing is the capital of China.' },
+                { chinese: '我住在中国。', pinyin: 'Wǒ zhù zài Zhōngguó.', english: 'I live in China.' },
+                { chinese: '我们去商店买东西。', pinyin: 'Wǒmen qù shāngdiàn mǎi dōngxi.', english: 'We go to the store to buy things.' },
+                { chinese: '饭店的菜很好吃。', pinyin: 'Fàndiàn de cài hěn hǎochī.', english: 'The restaurant\'s food is very delicious.' },
+                { chinese: '医生在医院工作。', pinyin: 'Yīshēng zài yīyuàn gōngzuò.', english: 'Doctors work in hospitals.' },
+                { chinese: '我的家很温暖。', pinyin: 'Wǒ de jiā hěn wēnnuǎn.', english: 'My home is very warm.' },
+                { chinese: '学校在前面。', pinyin: 'Xuéxiào zài qiánmiàn.', english: 'The school is in front.' },
+                { chinese: '商店在后面。', pinyin: 'Shāngdiàn zài hòumiàn.', english: 'The store is behind.' },
+                { chinese: '书在桌子上。', pinyin: 'Shū zài zhuōzi shang.', english: 'The book is on the table.' },
+                { chinese: '猫在家里。', pinyin: 'Māo zài jiā lǐ.', english: 'The cat is at home.' }
+            ],
+            'transport': [
+                { chinese: '我坐出租车去学校。', pinyin: 'Wǒ zuò chūzūchē qù xuéxiào.', english: 'I take a taxi to school.' },
+                { chinese: '飞机飞得很快。', pinyin: 'Fēijī fēi de hěn kuài.', english: 'Airplanes fly very fast.' },
+                { chinese: '我喜欢骑自行车。', pinyin: 'Wǒ xǐhuan qí zìxíngchē.', english: 'I like to ride a bicycle.' },
+                { chinese: '汽车很贵。', pinyin: 'Qìchē hěn guì.', english: 'Cars are very expensive.' },
+                { chinese: '我坐公共汽车上学。', pinyin: 'Wǒ zuò gōnggòng qìchē shàngxué.', english: 'I take the bus to school.' },
+                { chinese: '火车很长。', pinyin: 'Huǒchē hěn cháng.', english: 'Trains are very long.' },
+                { chinese: '船在水上。', pinyin: 'Chuán zài shuǐ shang.', english: 'The boat is on the water.' },
+                { chinese: '摩托车很快。', pinyin: 'Mótuōchē hěn kuài.', english: 'Motorcycles are very fast.' },
+                { chinese: '我坐地铁去北京。', pinyin: 'Wǒ zuò dìtiě qù Běijīng.', english: 'I take the subway to Beijing.' },
+                { chinese: '公交车很方便。', pinyin: 'Gōngjiāochē hěn fāngbiàn.', english: 'Buses are very convenient.' }
+            ],
+            'actions': [
+                { chinese: '我来学校。', pinyin: 'Wǒ lái xuéxiào.', english: 'I come to school.' },
+                { chinese: '我去商店。', pinyin: 'Wǒ qù shāngdiàn.', english: 'I go to the store.' },
+                { chinese: '我看书。', pinyin: 'Wǒ kàn shū.', english: 'I read books.' },
+                { chinese: '我听音乐。', pinyin: 'Wǒ tīng yīnyuè.', english: 'I listen to music.' },
+                { chinese: '我说汉语。', pinyin: 'Wǒ shuō hànyǔ.', english: 'I speak Chinese.' },
+                { chinese: '我做作业。', pinyin: 'Wǒ zuò zuòyè.', english: 'I do homework.' },
+                { chinese: '我坐在椅子上。', pinyin: 'Wǒ zuò zài yǐzi shang.', english: 'I sit on the chair.' },
+                { chinese: '我住在北京。', pinyin: 'Wǒ zhù zài Běijīng.', english: 'I live in Beijing.' },
+                { chinese: '我买苹果。', pinyin: 'Wǒ mǎi píngguǒ.', english: 'I buy apples.' },
+                { chinese: '我打电话给朋友。', pinyin: 'Wǒ dǎ diànhuà gěi péngyou.', english: 'I call my friend on the phone.' }
+            ],
+            'questions': [
+                { chinese: '这是什么？', pinyin: 'Zhè shì shénme?', english: 'What is this?' },
+                { chinese: '你是谁？', pinyin: 'Nǐ shì shéi?', english: 'Who are you?' },
+                { chinese: '你在哪？', pinyin: 'Nǐ zài nǎ?', english: 'Where are you?' },
+                { chinese: '你去哪儿？', pinyin: 'Nǐ qù nǎr?', english: 'Where are you going?' },
+                { chinese: '怎么去学校？', pinyin: 'Zěnme qù xuéxiào?', english: 'How do I get to school?' },
+                { chinese: '你怎么样？', pinyin: 'Nǐ zěnmeyàng?', english: 'How are you?' },
+                { chinese: '多少钱？', pinyin: 'Duōshǎo qián?', english: 'How much money?' },
+                { chinese: '你有几个苹果？', pinyin: 'Nǐ yǒu jǐ gè píngguǒ?', english: 'How many apples do you have?' },
+                { chinese: '你好吗？', pinyin: 'Nǐ hǎo ma?', english: 'How are you?' },
+                { chinese: '你在做什么呢？', pinyin: 'Nǐ zài zuò shénme ne?', english: 'What are you doing?' }
+            ],
+            'pronouns': [
+                { chinese: '我是学生。', pinyin: 'Wǒ shì xuésheng.', english: 'I am a student.' },
+                { chinese: '你是老师。', pinyin: 'Nǐ shì lǎoshī.', english: 'You are a teacher.' },
+                { chinese: '他是我的朋友。', pinyin: 'Tā shì wǒ de péngyou.', english: 'He is my friend.' },
+                { chinese: '她很漂亮。', pinyin: 'Tā hěn piàoliang.', english: 'She is very beautiful.' },
+                { chinese: '我们一起去。', pinyin: 'Wǒmen yīqǐ qù.', english: 'We go together.' },
+                { chinese: '这是我的书。', pinyin: 'Zhè shì wǒ de shū.', english: 'This is my book.' },
+                { chinese: '那是他的笔。', pinyin: 'Nà shì tā de bǐ.', english: 'That is his pen.' },
+                { chinese: '我有很多朋友。', pinyin: 'Wǒ yǒu hěn duō péngyou.', english: 'I have many friends.' },
+                { chinese: '我在学校。', pinyin: 'Wǒ zài xuéxiào.', english: 'I am at school.' },
+                { chinese: '这是很好的书。', pinyin: 'Zhè shì hěn hǎo de shū.', english: 'This is a very good book.' }
+            ],
+            'descriptions': [
+                { chinese: '这个苹果很大。', pinyin: 'Zhè gè píngguǒ hěn dà.', english: 'This apple is very big.' },
+                { chinese: '那只猫很小。', pinyin: 'Nà zhī māo hěn xiǎo.', english: 'That cat is very small.' },
+                { chinese: '老师很好。', pinyin: 'Lǎoshī hěn hǎo.', english: 'The teacher is very good.' },
+                { chinese: '她很漂亮。', pinyin: 'Tā hěn piàoliang.', english: 'She is very beautiful.' },
+                { chinese: '我很高兴。', pinyin: 'Wǒ hěn gāoxìng.', english: 'I am very happy.' },
+                { chinese: '今天很热。', pinyin: 'Jīntiān hěn rè.', english: 'Today is very hot.' },
+                { chinese: '冬天很冷。', pinyin: 'Dōngtiān hěn lěng.', english: 'Winter is very cold.' },
+                { chinese: '兔子跑得很快。', pinyin: 'Tùzi pǎo de hěn kuài.', english: 'Rabbits run very fast.' },
+                { chinese: '乌龟走得很慢。', pinyin: 'Wūguī zǒu de hěn màn.', english: 'Turtles walk very slowly.' },
+                { chinese: '这是新书。', pinyin: 'Zhè shì xīn shū.', english: 'This is a new book.' }
+            ],
+            'weather': [
+                { chinese: '今天天气很好。', pinyin: 'Jīntiān tiānqì hěn hǎo.', english: 'The weather is very good today.' },
+                { chinese: '现在在下雨。', pinyin: 'Xiànzài zài xià yǔ.', english: 'It is raining now.' },
+                { chinese: '今天是晴天。', pinyin: 'Jīntiān shì qíngtiān.', english: 'Today is a sunny day.' },
+                { chinese: '明天是阴天。', pinyin: 'Míngtiān shì yīntiān.', english: 'Tomorrow will be cloudy.' },
+                { chinese: '今天风很大。', pinyin: 'Jīntiān fēng hěn dà.', english: 'The wind is very strong today.' },
+                { chinese: '冬天会下雪。', pinyin: 'Dōngtiān huì xià xuě.', english: 'It snows in winter.' },
+                { chinese: '太阳很亮。', pinyin: 'Tàiyáng hěn liàng.', english: 'The sun is very bright.' },
+                { chinese: '晚上有月亮。', pinyin: 'Wǎnshang yǒu yuèliang.', english: 'There is a moon at night.' },
+                { chinese: '星星很漂亮。', pinyin: 'Xīngxing hěn piàoliang.', english: 'The stars are very beautiful.' },
+                { chinese: '现在天气很热。', pinyin: 'Xiànzài tiānqì hěn rè.', english: 'The weather is very hot now.' }
+            ],
+            'all': []
+        };
+
+        // Select a lesson
+        function selectLesson(lessonKey) {
+            currentLesson = lessonKey;
+            currentVocab = [...lessons[lessonKey].vocab];
+            currentIndex = 0;
+            isRandomized = false;
+            
+            // Update UI
+            document.getElementById('lessonSelector').style.display = 'none';
+            document.getElementById('flashcardSection').classList.add('active');
+            document.getElementById('lessonInfo').textContent = 
+                `${lessons[lessonKey].icon} ${lessons[lessonKey].name} - ${currentVocab.length} words`;
+            
+            // Hide "Back to Main Flashcards" link when in a lesson
+            document.getElementById('backToMainLink').style.display = 'none';
+            
+            // Update active lesson button
+            document.querySelectorAll('.lesson-btn').forEach(btn => btn.classList.remove('active'));
+            
+            displayCard();
+            updateInfo();
+            displayVocabList();
+            displaySentences();
+        }
+
+        // Display vocabulary list
+        function displayVocabList() {
+            const vocabList = document.getElementById('vocabList');
+            vocabList.innerHTML = '';
+            
+            currentVocab.forEach(item => {
+                const vocabItem = document.createElement('div');
+                vocabItem.className = 'vocab-item';
+                vocabItem.innerHTML = `
+                    <div class="chinese-word">${item.chinese}</div>
+                    <div class="pinyin-word">${item.pinyin}</div>
+                    <div class="english-word">${item.english}</div>
+                `;
+                vocabList.appendChild(vocabItem);
+            });
+        }
+
+        // Display sample sentences
+        function displaySentences() {
+            const sentencesList = document.getElementById('sentencesList');
+            sentencesList.innerHTML = '';
+            
+            let sentences = lessonSentences[currentLesson] || [];
+            
+            if (sentences.length === 0 && currentLesson === 'all') {
+                // For "all" lesson, show sentences from multiple categories
+                const allSentences = [];
+                Object.values(lessonSentences).forEach(sentList => {
+                    if (Array.isArray(sentList) && sentList.length > 0) {
+                        allSentences.push(...sentList.slice(0, 2)); // Take 2 from each
+                    }
+                });
+                sentences = allSentences.slice(0, 10);
+            }
+            
+            sentences.slice(0, 10).forEach(sentence => {
+                const sentenceItem = document.createElement('div');
+                sentenceItem.className = 'sentence-item';
+                sentenceItem.innerHTML = `
+                    <div class="sentence-chinese">${sentence.chinese}</div>
+                    <div class="sentence-pinyin">${sentence.pinyin}</div>
+                    <div class="sentence-english">${sentence.english}</div>
+                `;
+                sentencesList.appendChild(sentenceItem);
+            });
+        }
+
+        // Display current card
+        function displayCard() {
+            if (currentVocab.length === 0) {
+                document.getElementById('chinese').textContent = 'No words in this lesson';
+                return;
+            }
+
+            const card = currentVocab[currentIndex];
+            document.getElementById('chinese').textContent = card.chinese;
+            document.getElementById('pinyin').textContent = card.pinyin;
+            document.getElementById('english').textContent = card.english;
+            
+            // Reset flip state
+            document.getElementById('flashcard').classList.remove('flipped');
+            
+            updateCounter();
+        }
+
+        // Next card function
+        function nextCard() {
+            if (currentVocab.length === 0) return;
+            currentIndex = (currentIndex + 1) % currentVocab.length;
+            displayCard();
+        }
+
+        // Previous card function
+        function prevCard() {
+            if (currentVocab.length === 0) return;
+            currentIndex = (currentIndex - 1 + currentVocab.length) % currentVocab.length;
+            displayCard();
+        }
+
+        // Update card counter
+        function updateCounter() {
+            document.getElementById('counter').textContent = 
+                `${currentIndex + 1} / ${currentVocab.length}`;
+        }
+
+        // Update info display
+        function updateInfo() {
+            const info = document.getElementById('cardInfo');
+            const order = isRandomized ? 'Shuffled' : 'In order';
+            info.textContent = `${currentVocab.length} cards • ${order}`;
+        }
+
+        // Randomize vocabulary
+        function randomize() {
+            isRandomized = true;
+            for (let i = currentVocab.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentVocab[i], currentVocab[j]] = [currentVocab[j], currentVocab[i]];
+            }
+            currentIndex = 0;
+            displayCard();
+            updateInfo();
+        }
+
+        // Sort back to original order
+        function sortOriginal() {
+            isRandomized = false;
+            // Restore original order from lesson
+            currentVocab = [...lessons[currentLesson].vocab];
+            currentIndex = 0;
+            displayCard();
+            updateInfo();
+        }
+
+        // Event listeners
+        document.getElementById('flashcard').addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', prevCard);
+        document.getElementById('nextBtn').addEventListener('click', nextCard);
+
+        document.getElementById('randomBtn').addEventListener('click', function() {
+            if (isRandomized) {
+                sortOriginal();
+                this.textContent = '🔀 Shuffle';
+            } else {
+                randomize();
+                this.textContent = '🔤 In Order';
+            }
+        });
+
+        document.getElementById('backToLessons').addEventListener('click', function() {
+            document.getElementById('lessonSelector').style.display = 'block';
+            document.getElementById('flashcardSection').classList.remove('active');
+            currentLesson = null;
+            currentVocab = [];
+            
+            // Show "Back to Main Flashcards" link again when returning to lesson selector
+            document.getElementById('backToMainLink').style.display = 'inline-block';
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (!currentLesson) return; // Only work when in a lesson
+            
+            if (e.key === 'ArrowLeft') {
+                prevCard();
+            } else if (e.key === 'ArrowRight') {
+                nextCard();
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('flashcard').click();
+            }
+        });
+
+        // Initialize
+        loadVocabulary();
+    </script>
+</body>
+</html>
