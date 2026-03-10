@@ -440,11 +440,12 @@
         <div class="controls">
             <div class="level-buttons">
                 <button class="level-btn" data-level="all">ALL</button>
-                <button class="level-btn active" data-level="1">Level 1</button>
-                <button class="level-btn" data-level="2">Level 2</button>
-                <button class="level-btn" data-level="3">Level 3</button>
-                <button class="level-btn" data-level="4">Level 4</button>
+                <button class="level-btn active" data-level="1">HSK 1</button>
+                <button class="level-btn" data-level="2">HSK 2</button>
+                <button class="level-btn" data-level="3">HSK 3</button>
+                <button class="level-btn" data-level="4">HSK 4</button>
                 <button class="level-btn" data-level="ns">NS Concepts</button>
+                <button class="level-btn" data-level="lesson1">Lesson 1</button>
             </div>
             <button class="action-btn" id="randomBtn">🔀 Randomize</button>
             <div class="tip-container" style="margin-top: 0;">
@@ -507,7 +508,8 @@
             2: [],
             3: [],
             4: [],
-            ns: []
+            ns: [],
+            lesson1: []
         };
         let currentVocab = [];
         let currentIndex = 0;
@@ -569,16 +571,21 @@
                     fetch('nsconcepts.md').then(r => {
                         if (!r.ok) throw new Error(`HTTP ${r.status}`);
                         return r.text();
+                    }),
+                    fetch('lesson1vocab.md').then(r => {
+                        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                        return r.text();
                     })
                 ]);
 
-                const [hsk1, hsk2, hsk3, hsk4, nsconcepts] = responses;
+                const [hsk1, hsk2, hsk3, hsk4, nsconcepts, lesson1vocab] = responses;
 
                 allVocab[1] = parseMarkdown(hsk1, 1);
                 allVocab[2] = parseMarkdown(hsk2, 2);
                 allVocab[3] = parseMarkdown(hsk3, 3);
                 allVocab[4] = parseMarkdown(hsk4, 4);
                 allVocab.ns = parseMarkdown(nsconcepts, 'ns');
+                allVocab.lesson1 = parseMarkdown(lesson1vocab, 'lesson1');
 
                 if (allVocab[1].length === 0 && allVocab[2].length === 0 && 
                     allVocab[3].length === 0 && allVocab[4].length === 0) {
@@ -602,10 +609,13 @@
                     ...allVocab[2].map(v => ({...v, level: 2})),
                     ...allVocab[3].map(v => ({...v, level: 3})),
                     ...allVocab[4].map(v => ({...v, level: 4})),
-                    ...allVocab.ns.map(v => ({...v, level: 'ns'}))
+                    ...allVocab.ns.map(v => ({...v, level: 'ns'})),
+                    ...allVocab.lesson1.map(v => ({...v, level: 'lesson1'}))
                 ];
             } else if (currentLevel === 'ns') {
                 currentVocab = allVocab.ns.map(v => ({...v, level: 'ns'}));
+            } else if (currentLevel === 'lesson1') {
+                currentVocab = allVocab.lesson1.map(v => ({...v, level: 'lesson1'}));
             } else {
                 currentVocab = allVocab[parseInt(currentLevel)].map(v => ({...v, level: parseInt(currentLevel)}));
             }
